@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Button from "./components/Button";
 import Anecdote from "./components/Anecdote";
+import VotesCounter from "./components/VotesCounter";
 
 const App = () => {
   const anecdotes = [
@@ -15,16 +16,25 @@ const App = () => {
   ];
 
   const [selected, setSelected] = useState(0);
+  const [points, setPoints] = useState(Array(anecdotes.length).fill(0));
 
   const generateRandomNumber = () => {
     const randomIndex = Math.floor(Math.random() * anecdotes.length);
     setSelected(randomIndex);
   };
 
+  const voteHandler = () => {
+    const newPoints = [...points];
+    newPoints[selected]++;
+    setPoints(newPoints);
+  };
+
   return (
     <div>
       <Anecdote anecdote={anecdotes[selected]} />
-      <Button onClick={generateRandomNumber} text="next anecdote"></Button>
+      <VotesCounter votes={points[selected]} />
+      <Button onClick={voteHandler} text="vote" />
+      <Button onClick={generateRandomNumber} text="next anecdote" />
     </div>
   );
 };
