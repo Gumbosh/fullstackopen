@@ -2,11 +2,9 @@ import { useEffect, useState } from "react";
 import DisplayNumbers from "./components/DisplayNumbers";
 import AddNewNumber from "./components/AddNewNumber";
 import Search from "./components/Search";
-import axios from "axios";
+import numbersService from "./services/numbers";
 
 const App = () => {
-  const BASE_URL = "http://localhost:3001/persons";
-
   const [persons, setPersons] = useState([]);
   const [searchName, setSearchName] = useState("");
   const [newName, setNewName] = useState("");
@@ -14,10 +12,15 @@ const App = () => {
   const [filteredPersons, setFilteredPersons] = useState([]);
 
   useEffect(() => {
-    axios.get(BASE_URL).then((response) => {
-      setPersons(response.data);
-      setFilteredPersons(response.data);
-    });
+    numbersService
+      .getAll()
+      .then((initialNumbers) => {
+        setPersons(initialNumbers);
+        setFilteredPersons(initialNumbers);
+      })
+      .catch((error) => {
+        console.error("Error fetching numbers", error);
+      });
   }, []);
 
   const handleNewNameChange = (event) => {
@@ -33,16 +36,19 @@ const App = () => {
     if (persons.some((person) => person.name === newName)) {
       alert(`${newName} is already added to phonebook`);
     } else {
-      axios
-        .post(BASE_URL, {
-          name: newName,
-          number: newNumber,
-        })
-        .then((response) => {
-          setPersons((prev) => [...prev, response.data]);
-          setFilteredPersons((prev) => [...prev, response.data]);
+      numbersService
+        .create({ name: newName, number: newNumber })
+        .then((newPerson) => {
+          setPersons((prevPersons) => [...prevPersons, newPerson]);
+          setFilteredPersons((prevFilteredPersons) => [
+            ...prevFilteredPersons,
+            newPerson,
+          ]);
           setNewName("");
           setNewNumber("");
+        })
+        .catch((error) => {
+          console.error("Error creating new person", error);
         });
     }
   };
@@ -65,7 +71,6 @@ const App = () => {
         onSubmit={handleSubmit}
         nameValue={newName}
         nameOnChange={handleNewNameChange}
-        value
         numberValue={newNumber}
         numberOnChange={handleNewNumberChange}
       />
