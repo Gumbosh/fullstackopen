@@ -5,14 +5,16 @@ import Search from "./components/Search";
 import axios from "axios";
 
 const App = () => {
+  const BASE_URL = "http://localhost:3001/persons";
+
   const [persons, setPersons] = useState([]);
   const [searchName, setSearchName] = useState("");
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
-  const [filteredPersons, setFilteredPersons] = useState(persons);
+  const [filteredPersons, setFilteredPersons] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
+    axios.get(BASE_URL).then((response) => {
       setPersons(response.data);
       setFilteredPersons(response.data);
     });
@@ -31,16 +33,18 @@ const App = () => {
     if (persons.some((person) => person.name === newName)) {
       alert(`${newName} is already added to phonebook`);
     } else {
-      const newPersons = [
-        ...persons,
-        { name: newName, number: newNumber, id: persons.length + 1 },
-      ];
-      setPersons(newPersons);
-      setFilteredPersons(newPersons);
+      axios
+        .post(BASE_URL, {
+          name: newName,
+          number: newNumber,
+        })
+        .then((response) => {
+          setPersons((prev) => [...prev, response.data]);
+          setFilteredPersons((prev) => [...prev, response.data]);
+          setNewName("");
+          setNewNumber("");
+        });
     }
-    setSearchName("");
-    setNewName("");
-    setNewNumber("");
   };
 
   const handleSearch = (event) => {
@@ -66,7 +70,7 @@ const App = () => {
         numberOnChange={handleNewNumberChange}
       />
       <h2>Numbers</h2>
-      <DisplayNumbers filteredPersons={filteredPersons} />
+      <DisplayNumbers persons={filteredPersons} />
     </div>
   );
 };
