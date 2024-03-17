@@ -20,6 +20,7 @@ const App = () => {
       })
       .catch((error) => {
         console.error("Error fetching numbers", error);
+        alert("Error fetching numbers");
       });
   }, []);
 
@@ -49,6 +50,7 @@ const App = () => {
         })
         .catch((error) => {
           console.error("Error creating new person", error);
+          alert("Error creating new person");
         });
     }
   };
@@ -60,6 +62,26 @@ const App = () => {
       person.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredPersons(filteredPersons);
+  };
+
+  const handleRemove = (id) => {
+    const personToRemove = persons.find((person) => person.id === id);
+    if (window.confirm(`Delete ${personToRemove.name}?`)) {
+      numbersService
+        .remove(id)
+        .then(() => {
+          setPersons((prevPersons) =>
+            prevPersons.filter((person) => person.id !== id)
+          );
+          setFilteredPersons((prevFilteredPersons) =>
+            prevFilteredPersons.filter((person) => person.id !== id)
+          );
+        })
+        .catch((error) => {
+          console.error("Error removing person", error);
+          alert("Error removing person");
+        });
+    }
   };
 
   return (
@@ -75,7 +97,7 @@ const App = () => {
         numberOnChange={handleNewNumberChange}
       />
       <h2>Numbers</h2>
-      <DisplayNumbers persons={filteredPersons} />
+      <DisplayNumbers persons={filteredPersons} handleRemove={handleRemove} />
     </div>
   );
 };

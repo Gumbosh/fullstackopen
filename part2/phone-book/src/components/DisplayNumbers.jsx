@@ -1,10 +1,11 @@
-const DisplayNumbers = ({ persons }) => {
+const DisplayNumbers = ({ persons, handleRemove }) => {
   return (
     <div>
-      {persons.map((persons) => (
-        <p key={persons.id}>
-          {persons.name} {persons.number}
-        </p>
+      {persons.map((person) => (
+        <div key={person.id}>
+          <span>{`${person.name} ${person.number} `}</span>
+          <button onClick={() => handleRemove(person.id)}>delete</button>
+        </div>
       ))}
     </div>
   );
