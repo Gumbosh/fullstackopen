@@ -4,6 +4,7 @@ import AddNewNumber from "./components/AddNewNumber";
 import Search from "./components/Search";
 import numbersService from "./services/numbers";
 import Notification from "./components/Notification";
+import ErrorNotification from "./components/ErrorNotification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -12,6 +13,22 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filteredPersons, setFilteredPersons] = useState([]);
   const [notificationMessage, setNotificationMessage] = useState(null);
+  const [errorNotificationMessage, setErrorNotificationMessage] =
+    useState(null);
+
+  const handleNotification = (message) => {
+    setNotificationMessage(message);
+    setTimeout(() => {
+      setNotificationMessage(null);
+    }, 5000);
+  };
+
+  const handleErrorNotification = (message) => {
+    setErrorNotificationMessage(message);
+    setTimeout(() => {
+      setErrorNotificationMessage(null);
+    }, 5000);
+  };
 
   useEffect(() => {
     numbersService
@@ -21,8 +38,9 @@ const App = () => {
         setFilteredPersons(initialNumbers);
       })
       .catch((error) => {
-        console.error("Error fetching numbers", error);
-        alert("Error fetching numbers");
+        const errorMessage = "Error fetching numbers";
+        console.error(errorMessage, error.message);
+        handleErrorNotification(errorMessage);
       });
   }, []);
 
@@ -32,13 +50,6 @@ const App = () => {
 
   const handleNewNumberChange = (event) => {
     setNewNumber(event.target.value);
-  };
-
-  const handleNotification = (message) => {
-    setNotificationMessage(message);
-    setTimeout(() => {
-      setNotificationMessage(null);
-    }, 3000);
   };
 
   const handleSubmit = (event) => {
@@ -69,8 +80,17 @@ const App = () => {
             handleNotification(`Update ${personToUpdate.name} phone number`);
           })
           .catch((error) => {
-            console.error("Error updating person", error);
-            alert("Error updating person");
+            const errorMessage = `Information of ${personToUpdate.name} has already been removed from server`;
+            console.error(errorMessage, error.message);
+            handleErrorNotification(errorMessage);
+            setPersons(
+              persons.filter((person) => person.id !== personToUpdate.id)
+            );
+            setFilteredPersons(
+              filteredPersons.filter(
+                (person) => person.id !== personToUpdate.id
+              )
+            );
           });
         setNewName("");
         setNewNumber("");
@@ -91,8 +111,9 @@ const App = () => {
           handleNotification(`Added ${newName}`);
         })
         .catch((error) => {
-          console.error("Error creating new person", error);
-          alert("Error creating new person");
+          const errorMessage = "Error creating new person";
+          console.error(errorMessage, error.message);
+          handleErrorNotification(errorMessage);
         });
     }
   };
@@ -120,8 +141,9 @@ const App = () => {
           );
         })
         .catch((error) => {
-          console.error("Error removing person", error);
-          alert("Error removing person");
+          const errorMessage = "Error removing person";
+          console.error(errorMessage, error.message);
+          handleErrorNotification(errorMessage);
         });
     }
   };
@@ -129,6 +151,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <ErrorNotification message={errorNotificationMessage} />
       <Notification message={notificationMessage} />
       <Search value={searchName} onChange={handleSearch} />
       <h2>add a new</h2>

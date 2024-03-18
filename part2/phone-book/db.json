@@ -1,19 +1,9 @@
 {
   "persons": [
     {
-      "id": "m3n4",
-      "name": "Olivia Wilson",
-      "number": "333222333"
-    },
-    {
       "id": "q7r8",
       "name": "Sophia Martinez",
       "number": "5329876543"
-    },
-    {
-      "id": "c3d4",
-      "name": "Ava Smith",
-      "number": "322221111"
     },
     {
       "id": "e5f6",
@@ -21,14 +11,9 @@
       "number": "2468135792"
     },
     {
-      "id": "fc8c",
-      "name": "John Doe",
-      "number": "321123321"
-    },
-    {
-      "id": "fa79",
-      "name": "Mike Johnson",
-      "number": "783222222"
+      "id": "c3d4",
+      "name": "Jane Smith",
+      "number": "9876543210"
     }
   ]
 }
