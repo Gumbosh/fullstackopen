@@ -3,6 +3,7 @@ import DisplayNumbers from "./components/DisplayNumbers";
 import AddNewNumber from "./components/AddNewNumber";
 import Search from "./components/Search";
 import numbersService from "./services/numbers";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -10,6 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filteredPersons, setFilteredPersons] = useState([]);
+  const [notificationMessage, setNotificationMessage] = useState(null);
 
   useEffect(() => {
     numbersService
@@ -30,6 +32,13 @@ const App = () => {
 
   const handleNewNumberChange = (event) => {
     setNewNumber(event.target.value);
+  };
+
+  const handleNotification = (message) => {
+    setNotificationMessage(message);
+    setTimeout(() => {
+      setNotificationMessage(null);
+    }, 3000);
   };
 
   const handleSubmit = (event) => {
@@ -57,6 +66,7 @@ const App = () => {
                 person.id !== personToUpdate.id ? person : updatedPerson
               )
             );
+            handleNotification(`Update ${personToUpdate.name} phone number`);
           })
           .catch((error) => {
             console.error("Error updating person", error);
@@ -78,6 +88,7 @@ const App = () => {
           ]);
           setNewName("");
           setNewNumber("");
+          handleNotification(`Added ${newName}`);
         })
         .catch((error) => {
           console.error("Error creating new person", error);
@@ -117,7 +128,8 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+      <Notification message={notificationMessage} />
       <Search value={searchName} onChange={handleSearch} />
       <h2>add a new</h2>
       <AddNewNumber
