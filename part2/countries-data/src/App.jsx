@@ -44,11 +44,20 @@ function App() {
     setSearch(event.target.value);
   };
 
+  const showBtnHandler = (country) => {
+    setFilteredCountries(country);
+    setCountryData(country);
+  };
+
   return (
     <div>
       <span>find countries </span>
       <input type="text" placeholder="Search..." onChange={onSearchChange} />
-      <CountrySearch countries={filteredCountries} countryData={countryData} />
+      <CountrySearch
+        countries={filteredCountries}
+        countryData={countryData}
+        showBtnHandler={showBtnHandler}
+      />
     </div>
   );
 }
