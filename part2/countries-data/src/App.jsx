@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import CountrySearch from "./components/CountrySearch";
 import countriesAPI from "./services/countriesAPI";
+import weatherAPI from "./services/weatherAPI";
 
 function App() {
   const [allCountries, setAllCountries] = useState(null);
@@ -30,6 +31,15 @@ function App() {
           .getCountry(filtered[0].name.common.toLowerCase())
           .then((country) => {
             setCountryData(country);
+            const [latitude, longitude] = country.capitalInfo.latlng;
+            weatherAPI.getWeather(latitude, longitude).then((weather) => {
+              const { temperature_2m, wind_speed_10m } = weather.data.current;
+              setCountryData({
+                ...country,
+                temperature: temperature_2m,
+                wind: wind_speed_10m,
+              });
+            });
           })
           .catch((error) => {
             console.error("Error fetching country data:", error);
@@ -46,7 +56,15 @@ function App() {
 
   const showBtnHandler = (country) => {
     setFilteredCountries(country);
-    setCountryData(country);
+    const [latitude, longitude] = country.capitalInfo.latlng;
+    weatherAPI.getWeather(latitude, longitude).then((weather) => {
+      const { temperature_2m, wind_speed_10m } = weather.data.current;
+      setCountryData({
+        ...country,
+        temperature: temperature_2m,
+        wind: wind_speed_10m,
+      });
+    });
   };
 
   return (
