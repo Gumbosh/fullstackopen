@@ -3,7 +3,7 @@ const app = express();
 
 const PORT = 3001;
 
-const persons = [
+let persons = [
   {
     id: 1,
     name: "Arto Hellas",
@@ -32,10 +32,22 @@ app.get("/api/persons", (req, res) => {
 
 app.get("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id);
-  const person = persons.find((person) => person.id === id);
+  const personIndex = persons.find((person) => person.id === id);
 
-  if (person) {
-    res.json(person);
+  if (personIndex) {
+    res.json(personIndex);
+  } else {
+    res.status(404).end();
+  }
+});
+
+app.delete("/api/persons/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const personIndex = persons.find((person) => person.id === id);
+
+  if (personIndex) {
+    persons = persons.filter((person) => person.id !== id);
+    res.status(204).end();
   } else {
     res.status(404).end();
   }
