@@ -39,10 +39,10 @@ app.get("/api/persons", (req, res) => {
 
 app.get("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id);
-  const personIndex = persons.find((person) => person.id === id);
+  const person = persons.find((person) => person.id === id);
 
-  if (personIndex) {
-    res.json(personIndex);
+  if (person) {
+    res.json(person);
   } else {
     res.status(404).end();
   }
@@ -50,9 +50,9 @@ app.get("/api/persons/:id", (req, res) => {
 
 app.delete("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id);
-  const personIndex = persons.find((person) => person.id === id);
+  const person = persons.find((person) => person.id === id);
 
-  if (personIndex) {
+  if (person) {
     persons = persons.filter((person) => person.id !== id);
     res.status(204).end();
   } else {
@@ -62,6 +62,13 @@ app.delete("/api/persons/:id", (req, res) => {
 
 app.post("/api/persons", (req, res) => {
   const body = req.body;
+
+  if (persons.find((person) => person.name === body.name)) {
+    return res.status(400).json({
+      error: "name must be unique",
+    });
+  }
+
   if (!body.name || !body.number) {
     return res.status(400).json({
       error: "name or number is missing",
