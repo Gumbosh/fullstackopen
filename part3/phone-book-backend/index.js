@@ -32,15 +32,14 @@ app.get("/api/persons/:id", (req, res) => {
 });
 
 app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const person = persons.find((person) => person.id === id);
-
-  if (person) {
-    persons = persons.filter((person) => person.id !== id);
-    res.status(204).end();
-  } else {
-    res.status(404).end();
-  }
+  People.findByIdAndDelete(req.params.id)
+    .then((result) => {
+      res.status(204).end();
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(400).send({ error: "Invalid id" });
+    });
 });
 
 app.post("/api/persons", (req, res) => {
